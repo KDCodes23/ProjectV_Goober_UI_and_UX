@@ -1,95 +1,50 @@
-# ProjectV_Goober_UI_and_UX
-Goober – UI/UX Development
-Goober is a ride-hailing application inspired by Uber, designed to provide a seamless and intuitive experience for both riders and drivers. This repository documents the UI/UX contributions of the design team, covering wireframes, design assets, components, and workflows that shaped the product’s front-end experience.
+# Welcome to your Expo app 👋
 
-Overview
-The UI/UX team’s responsibility in Goober was to ensure a consistent, user-friendly, and scalable interface across platforms. This included:
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-Designing wireframes and prototypes for rider and driver flows.
+## Get started
 
-Creating a visual identity (colors, typography, iconography).
+1. Install dependencies
 
-Building reusable components for React Native implementation.
+   ```bash
+   npm install
+   ```
 
-Conducting peer reviews and gathering user feedback for iterative updates.
+2. Start the app
 
-Features Designed
-Rider Experience
-Clean onboarding & login screens with quick authentication.
+   ```bash
+   npx expo start
+   ```
 
-Ride request flow: pickup/drop-off selection with map integration.
+In the output, you'll find options to open the app in a
 
-Real-time ride tracking: clear status indicators, driver information, and ETA.
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-Payment flow: minimal UI steps, clear confirmation screens, support for multiple payment methods.
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-Driver Experience
-Straightforward driver onboarding and approval process.
+## Get a fresh project
 
-Ride acceptance/decline UI optimized for quick decisions.
+When you're ready, run:
 
-Trip and earnings dashboard with simple visual summaries.
+```bash
+npm run reset-project
+```
 
-Shared Components
-Universal navigation system (bottom tabs, top headers).
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-Buttons, cards, and modals designed for accessibility and reuse.
+## Learn more
 
-Light/dark theme considerations for user preferences.
+To learn more about developing your project with Expo, look at the following resources:
 
-Tools & Stack
-Design & Prototyping: Figma
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-Development Framework: React Native with Tailwind NativeWind
+## Join the community
 
-Collaboration: Discord (async design discussions & critiques)
+Join our community of developers creating universal apps.
 
-Version Control: GitHub for design specifications, component handoffs, and changelogs
-
-UX Process
-Research & Competitive Analysis
-Reviewed existing ride-hailing apps to benchmark best practices and identify UX pain points.
-
-Wireframing
-Low-fidelity sketches were produced to iterate quickly on flows before committing to high fidelity.
-
-Prototyping
-Interactive prototypes in Figma for testing with internal stakeholders before handoff.
-
-Feedback & Iteration
-Weekly syncs with the dev team to clarify feasibility and adjust flows.
-
-Implementation Handoff
-Exported design tokens, assets, and style guides into a shared repository for seamless dev integration.
-
-UI Guidelines
-Typography: Clean sans-serif font with scalable hierarchy.
-
-Color Palette: Contrasting, high-visibility colors for accessibility and brand identity.
-
-Components: Built for reusability in React Native. Each component documented with interaction guidelines.
-
-Accessibility: WCAG-compliant contrast ratios, large touch areas, and clear navigation patterns.
-
-Repository Structure
-text
-/designs
-   └── wireframes
-   └── high-fidelity
-   └── prototypes
-
-/components
-   └── buttons
-   └── cards
-   └── modals
-
-/docs
-   └── style-guide.md
-   └── component-library.md
-   └── changelog.md
-Future Work
-Expand motion design for transitions and micro-interactions.
-
-Build a design system package for cross-project reuse.
-
-Conduct usability testing with real users for data-driven refinements.
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
