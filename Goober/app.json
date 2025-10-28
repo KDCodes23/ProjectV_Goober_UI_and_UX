@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "MyMultiScreenApp",
-    "slug": "MyMultiScreenApp",
+    "name": "Goober",
+    "slug": "Goober",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mymultiscreenapp",
+    "scheme": "goober",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
