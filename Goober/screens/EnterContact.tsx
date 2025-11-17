@@ -1,0 +1,225 @@
+// /screens/EnterContact.tsx
+
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { EnterContactScreenProps } from '../types/navigation';
+
+export default function EnterContact({ navigation }: EnterContactScreenProps) {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('+1');
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        {/* Yellow Dripping Design */}
+        <View style={styles.drippingContainer}>
+          <View style={styles.drip1} />
+          <View style={styles.drip2} />
+          <View style={styles.drip3} />
+        </View>
+
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Content */}
+        <View style={styles.content}>
+          <Text style={styles.title}>Enter Your Contact Details</Text>
+          <Text style={styles.subtitle}>
+            Enter your phone number with valid country code so others can reach you
+          </Text>
+
+          <View style={styles.inputRow}>
+            <TouchableOpacity style={styles.countryCodeButton}>
+              <Text style={styles.flag}>🇨🇦</Text>
+              <Ionicons name="chevron-down" size={16} color="#666" />
+            </TouchableOpacity>
+            <TextInput
+              style={styles.phoneInput}
+              placeholder="Phone number"
+              placeholderTextColor="#999"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
+          </View>
+        </View>
+
+        {/* Bottom Button */}
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity
+            style={[styles.sendButton, phoneNumber.length > 0 && styles.sendButtonActive]}
+            onPress={() => navigation.navigate('EnterEmail')}
+            disabled={phoneNumber.length === 0}
+          >
+            <Text style={styles.sendButtonText}>Send verification code</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFDE7',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  drippingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 150,
+    overflow: 'hidden',
+  },
+  drip1: {
+    position: 'absolute',
+    top: -20,
+    left: 20,
+    width: 60,
+    height: 100,
+    backgroundColor: '#FFD700',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  drip2: {
+    position: 'absolute',
+    top: -10,
+    right: 80,
+    width: 50,
+    height: 90,
+    backgroundColor: '#FFD700',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  drip3: {
+    position: 'absolute',
+    top: -30,
+    right: 20,
+    width: 70,
+    height: 120,
+    backgroundColor: '#FFD700',
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+    zIndex: 1,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 40,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  countryCodeButton: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    marginRight: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  flag: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  phoneInput: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    color: '#1A1A1A',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  bottomContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  sendButton: {
+    backgroundColor: '#FFD700',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    opacity: 0.5,
+  },
+  sendButtonActive: {
+    opacity: 1,
+  },
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+});
+

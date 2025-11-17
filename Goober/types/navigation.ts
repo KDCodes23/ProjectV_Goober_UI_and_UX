@@ -8,6 +8,24 @@ export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
   Home: undefined;
+  EnterName: undefined;
+  EnterContact: undefined;
+  EnterEmail: undefined;
+  EmailVerification: undefined;
+  CreatePassword: undefined;
+  SelectLocation: { type: 'from' | 'to' };
+  SelectDate: undefined;
+  SelectTime: undefined;
+  SelectSeats: undefined;
+  BookRide: undefined;
+  AvailableRides: undefined;
+  TripDetails: { driverId: string };
+  TripGoldenRules: undefined;
+  OtherPassengers: undefined;
+  Profile: undefined;
+  Payment: undefined;
+  BookingConfirmed: undefined;
+  LookingForRides: undefined;
 };
 
 export type SplashScreenProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
@@ -15,4 +33,22 @@ export type WelcomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Wel
 export type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 export type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
+export type EnterNameScreenProps = NativeStackScreenProps<RootStackParamList, 'EnterName'>;
+export type EnterContactScreenProps = NativeStackScreenProps<RootStackParamList, 'EnterContact'>;
+export type EnterEmailScreenProps = NativeStackScreenProps<RootStackParamList, 'EnterEmail'>;
+export type EmailVerificationScreenProps = NativeStackScreenProps<RootStackParamList, 'EmailVerification'>;
+export type CreatePasswordScreenProps = NativeStackScreenProps<RootStackParamList, 'CreatePassword'>;
+export type SelectLocationScreenProps = NativeStackScreenProps<RootStackParamList, 'SelectLocation'>;
+export type SelectDateScreenProps = NativeStackScreenProps<RootStackParamList, 'SelectDate'>;
+export type SelectTimeScreenProps = NativeStackScreenProps<RootStackParamList, 'SelectTime'>;
+export type SelectSeatsScreenProps = NativeStackScreenProps<RootStackParamList, 'SelectSeats'>;
+export type BookRideScreenProps = NativeStackScreenProps<RootStackParamList, 'BookRide'>;
+export type AvailableRidesScreenProps = NativeStackScreenProps<RootStackParamList, 'AvailableRides'>;
+export type TripDetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'TripDetails'>;
+export type TripGoldenRulesScreenProps = NativeStackScreenProps<RootStackParamList, 'TripGoldenRules'>;
+export type OtherPassengersScreenProps = NativeStackScreenProps<RootStackParamList, 'OtherPassengers'>;
+export type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'Profile'>;
+export type PaymentScreenProps = NativeStackScreenProps<RootStackParamList, 'Payment'>;
+export type BookingConfirmedScreenProps = NativeStackScreenProps<RootStackParamList, 'BookingConfirmed'>;
+export type LookingForRidesScreenProps = NativeStackScreenProps<RootStackParamList, 'LookingForRides'>;
 

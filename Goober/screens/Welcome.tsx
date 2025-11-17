@@ -27,6 +27,7 @@ export default function Welcome({ navigation }: WelcomeScreenProps) {
         />
         <View style={styles.titleContainer}>
           <Text style={styles.title}>G</Text>
+          <Text style={styles.title}>O</Text>
           <View style={styles.yellowO}>
             <Image
               source={require('../assets/Icon_Goober.png')}
@@ -34,7 +35,7 @@ export default function Welcome({ navigation }: WelcomeScreenProps) {
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.title}>OBER</Text>
+          <Text style={styles.title}>BER</Text>
         </View>
       </View>
 
