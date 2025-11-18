@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { SelectDateScreenProps } from '../types/navigation';
+import { useRide } from '../contexts/RideContext';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
@@ -35,6 +36,7 @@ const generateCalendar = () => {
 };
 
 export default function SelectDate({ navigation }: SelectDateScreenProps) {
+  const { booking, updateBooking } = useRide();
   const [selectedDate, setSelectedDate] = useState<{ month: number; day: number } | null>(null);
   const calendar = generateCalendar();
   const today = new Date();
@@ -54,6 +56,11 @@ export default function SelectDate({ navigation }: SelectDateScreenProps) {
 
   const handleConfirm = () => {
     if (selectedDate) {
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const date = new Date(2024, selectedDate.month, selectedDate.day);
+      const formattedDate = `${dayNames[date.getDay()]} ${monthNames[selectedDate.month]} ${selectedDate.day}`;
+      updateBooking({ date: formattedDate });
       navigation.goBack();
     }
   };

@@ -13,7 +13,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Goober needs your location to find nearby rides and track your trip.",
+        "NSLocationAlwaysUsageDescription": "Goober needs your location to track your trip in real-time."
+      },
+      "bundleIdentifier": "com.goober.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,8 +26,22 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ],
+      "package": "com.goober.app"
     },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Goober needs your location to find nearby rides and track your trip."
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/Icon_Goober.png"
     }

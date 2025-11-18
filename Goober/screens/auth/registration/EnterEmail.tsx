@@ -1,14 +1,15 @@
-// /screens/EnterContact.tsx
+// /screens/EnterEmail.tsx
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { EnterContactScreenProps } from '../types/navigation';
+import { EnterEmailScreenProps } from '../types/navigation';
+import { useRegistration } from '../contexts/RegistrationContext';
 
-export default function EnterContact({ navigation }: EnterContactScreenProps) {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('+1');
+export default function EnterEmail({ navigation }: EnterEmailScreenProps) {
+  const { registrationData, updateRegistrationData } = useRegistration();
+  const [email, setEmail] = useState(registrationData.email || '');
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -35,23 +36,20 @@ export default function EnterContact({ navigation }: EnterContactScreenProps) {
 
         {/* Content */}
         <View style={styles.content}>
-          <Text style={styles.title}>Enter Your Contact Details</Text>
+          <Text style={styles.title}>Enter Your Email Address</Text>
           <Text style={styles.subtitle}>
-            Enter your phone number with valid country code so others can reach you
+            Enter your email address so we can verify your account
           </Text>
 
-          <View style={styles.inputRow}>
-            <TouchableOpacity style={styles.countryCodeButton}>
-              <Text style={styles.flag}>🇨🇦</Text>
-              <Ionicons name="chevron-down" size={16} color="#666" />
-            </TouchableOpacity>
+          <View style={styles.inputContainer}>
             <TextInput
-              style={styles.phoneInput}
-              placeholder="Phone number"
+              style={styles.input}
+              placeholder="Email"
               placeholderTextColor="#999"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
           </View>
         </View>
@@ -59,9 +57,12 @@ export default function EnterContact({ navigation }: EnterContactScreenProps) {
         {/* Bottom Button */}
         <View style={styles.bottomContainer}>
           <TouchableOpacity
-            style={[styles.sendButton, phoneNumber.length > 0 && styles.sendButtonActive]}
-            onPress={() => navigation.navigate('EnterEmail')}
-            disabled={phoneNumber.length === 0}
+            style={[styles.sendButton, email.length > 0 && styles.sendButtonActive]}
+            onPress={() => {
+              updateRegistrationData({ email });
+              navigation.navigate('EmailVerification');
+            }}
+            disabled={email.length === 0}
           >
             <Text style={styles.sendButtonText}>Send verification code</Text>
           </TouchableOpacity>
@@ -161,33 +162,10 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 40,
   },
-  inputRow: {
-    flexDirection: 'row',
+  inputContainer: {
     marginTop: 20,
   },
-  countryCodeButton: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginRight: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  flag: {
-    fontSize: 20,
-    marginRight: 8,
-  },
-  phoneInput: {
-    flex: 1,
+  input: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,

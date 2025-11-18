@@ -35,7 +35,7 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>PICK UP</Text>
             <View style={styles.inputField}>
-              <Ionicons name="location-outline" size={16} color="#999" />
+              <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
               <Text style={styles.inputText}>Alagomeji Bus stop</Text>
             </View>
           </View>
@@ -76,7 +76,7 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>DROP OFF</Text>
             <View style={styles.inputField}>
-              <Ionicons name="location-outline" size={16} color="#999" />
+              <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
               <Text style={styles.inputText}>Alagomeji Bus stop</Text>
             </View>
           </View>
@@ -211,7 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 8,
     padding: 12,
-    gap: 8,
   },
   inputText: {
     fontSize: 14,

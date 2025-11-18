@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { SelectTimeScreenProps } from '../types/navigation';
+import { useRide } from '../contexts/RideContext';
 
 const generateTimeSlots = () => {
   const times = [];
@@ -27,7 +28,10 @@ export default function SelectTime({ navigation }: SelectTimeScreenProps) {
   const [showPicker, setShowPicker] = useState(false);
   const timeSlots = generateTimeSlots();
 
+  const { updateBooking } = useRide();
+  
   const handleConfirm = () => {
+    updateBooking({ time: selectedTime });
     navigation.goBack();
   };
 

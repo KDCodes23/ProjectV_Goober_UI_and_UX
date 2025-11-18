@@ -1,12 +1,38 @@
 // /screens/BookingConfirmed.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { BookingConfirmedScreenProps } from '../types/navigation';
+import { useRide, ActiveRide } from '../contexts/RideContext';
 
 export default function BookingConfirmed({ navigation }: BookingConfirmedScreenProps) {
+  const { booking, setActiveRide } = useRide();
+
+  useEffect(() => {
+    // Simulate booking acceptance after 2 seconds
+    const timer = setTimeout(() => {
+      if (booking.from && booking.to) {
+        const newRide: ActiveRide = {
+          id: Date.now().toString(),
+          driverId: '1',
+          driverName: 'Diran Olakunle',
+          carInfo: 'Toyota Camry • JJJ 452 FZ',
+          status: 'accepted',
+          from: booking.from,
+          to: booking.to,
+          date: booking.date || 'Fri 18 Aug',
+          time: booking.time || '06:00 AM',
+        };
+        setActiveRide(newRide);
+        navigation.replace('BookingAccepted');
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
@@ -21,9 +47,26 @@ export default function BookingConfirmed({ navigation }: BookingConfirmedScreenP
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => {
+            // Create active ride immediately if user clicks
+            if (booking.from && booking.to) {
+              const newRide: ActiveRide = {
+                id: Date.now().toString(),
+                driverId: '1',
+                driverName: 'Diran Olakunle',
+                carInfo: 'Toyota Camry • JJJ 452 FZ',
+                status: 'accepted',
+                from: booking.from,
+                to: booking.to,
+                date: booking.date || 'Fri 18 Aug',
+                time: booking.time || '06:00 AM',
+              };
+              setActiveRide(newRide);
+              navigation.replace('BookingAccepted');
+            }
+          }}
         >
-          <Text style={styles.buttonText}>Go to Home</Text>
+          <Text style={styles.buttonText}>View Booking</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

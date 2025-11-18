@@ -1,24 +1,58 @@
 // /screens/Home.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { HomeScreenProps } from '../types/navigation';
+import { useUser } from '../contexts/UserContext';
+import { useRide } from '../contexts/RideContext';
 
 export default function Home({ navigation }: HomeScreenProps) {
-  const userName = 'Naomi'; // Placeholder - will be replaced with actual user data
-  const [fromLocation, setFromLocation] = useState('Cold stone, Yaba');
-  const [toLocation, setToLocation] = useState('Lekki Phase 1');
-  const [selectedDate, setSelectedDate] = useState('Fri Aug 18');
-  const [selectedTime, setSelectedTime] = useState('06:00 AM');
-  const [seats, setSeats] = useState(0);
+  const { user } = useUser();
+  const { booking, updateBooking, activeRide } = useRide();
+
+  // Format date for display
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return 'Select date';
+    return dateStr;
+  };
+
+  // Format time for display
+  const formatTime = (timeStr: string | null) => {
+    if (!timeStr) return 'Select time';
+    return timeStr;
+  };
 
   const swapLocations = () => {
-    const temp = fromLocation;
-    setFromLocation(toLocation);
-    setToLocation(temp);
+    updateBooking({
+      from: booking.to,
+      to: booking.from,
+    });
   };
+
+  // Show active ride screen if there's an active ride
+  useEffect(() => {
+    if (activeRide) {
+      switch (activeRide.status) {
+        case 'accepted':
+          navigation.replace('BookingAccepted');
+          break;
+        case 'enRoute':
+          navigation.replace('DriverEnRoute');
+          break;
+        case 'arrived':
+          navigation.replace('DriverArrived');
+          break;
+        case 'inTrip':
+          navigation.replace('InTripMap');
+          break;
+        case 'completed':
+          navigation.replace('RideCompleted');
+          break;
+      }
+    }
+  }, [activeRide]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -26,10 +60,16 @@ export default function Home({ navigation }: HomeScreenProps) {
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.greetingSection}>
-            <Text style={styles.greeting}>Hi, {userName}</Text>
+            <Text style={styles.greeting}>Hi, {user?.name || 'User'}</Text>
             <Text style={styles.prompt}>What would you like to do today?</Text>
           </View>
-          <TouchableOpacity style={styles.notificationButton}>
+          <TouchableOpacity 
+            style={styles.notificationButton}
+            onPress={() => {
+              // TODO: Navigate to notifications screen
+              console.log('Notifications pressed');
+            }}
+          >
             <View style={styles.bellContainer}>
               <Ionicons name="notifications-outline" size={24} color="#333" />
               <View style={styles.notificationBadge} />
@@ -44,7 +84,7 @@ export default function Home({ navigation }: HomeScreenProps) {
             onPress={() => navigation.navigate('SelectLocation', { type: 'from' })}
           >
             <Text style={styles.fieldLabel}>From</Text>
-            <Text style={styles.fieldValue}>{fromLocation}</Text>
+            <Text style={styles.fieldValue}>{booking.from?.name || 'Select location'}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -52,7 +92,7 @@ export default function Home({ navigation }: HomeScreenProps) {
             onPress={() => navigation.navigate('SelectLocation', { type: 'to' })}
           >
             <Text style={styles.fieldLabel}>To</Text>
-            <Text style={styles.fieldValue}>{toLocation}</Text>
+            <Text style={styles.fieldValue}>{booking.to?.name || 'Select location'}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.swapButton} onPress={swapLocations}>
@@ -65,7 +105,7 @@ export default function Home({ navigation }: HomeScreenProps) {
               onPress={() => navigation.navigate('SelectDate')}
             >
               <Ionicons name="calendar-outline" size={20} color="#2D7A7A" style={{ marginRight: 6 }} />
-              <Text style={styles.detailText}>{selectedDate}</Text>
+              <Text style={styles.detailText}>{formatDate(booking.date)}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -73,7 +113,7 @@ export default function Home({ navigation }: HomeScreenProps) {
               onPress={() => navigation.navigate('SelectTime')}
             >
               <Ionicons name="time-outline" size={20} color="#2D7A7A" style={{ marginRight: 6 }} />
-              <Text style={styles.detailText}>{selectedTime}</Text>
+              <Text style={styles.detailText}>{formatTime(booking.time)}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -81,7 +121,7 @@ export default function Home({ navigation }: HomeScreenProps) {
               onPress={() => navigation.navigate('SelectSeats')}
             >
               <Ionicons name="person-outline" size={20} color="#2D7A7A" style={{ marginRight: 6 }} />
-              <Text style={styles.detailText}>{seats}</Text>
+              <Text style={styles.detailText}>{booking.seats || 1}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -89,13 +129,21 @@ export default function Home({ navigation }: HomeScreenProps) {
         {/* Bottom Section */}
         <View style={styles.bottomSection}>
           <TouchableOpacity
-            style={styles.findRideButton}
-            onPress={() => navigation.navigate('BookRide')}
+            style={[styles.findRideButton, (!booking.from || !booking.to) && styles.findRideButtonDisabled]}
+            onPress={() => {
+              if (booking.from && booking.to) {
+                navigation.navigate('BookRide');
+              }
+            }}
+            disabled={!booking.from || !booking.to}
           >
             <Text style={styles.findRideText}>Find a Ride</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.switchProfileButton}>
+          <TouchableOpacity 
+            style={styles.switchProfileButton}
+            onPress={() => navigation.navigate('Profile')}
+          >
             <Text style={styles.switchProfileText}>
               Want to offer a ride? <Text style={styles.switchProfileLink}>Switch in Profile</Text>
             </Text>
@@ -105,15 +153,27 @@ export default function Home({ navigation }: HomeScreenProps) {
 
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity 
+          style={styles.navItem}
+          onPress={() => navigation.navigate('Home')}
+        >
           <Ionicons name="home" size={24} color="#2D7A7A" />
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity 
+          style={styles.navItem}
+          onPress={() => {
+            // TODO: Navigate to trips screen
+            console.log('Trips pressed');
+          }}
+        >
           <Ionicons name="car-outline" size={24} color="#999" />
           <Text style={[styles.navLabel, styles.navLabelInactive]}>Trips</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity 
+          style={styles.navItem}
+          onPress={() => navigation.navigate('Profile')}
+        >
           <Ionicons name="person-outline" size={24} color="#999" />
           <Text style={[styles.navLabel, styles.navLabelInactive]}>Account</Text>
         </TouchableOpacity>
@@ -242,6 +302,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
+  },
+  findRideButtonDisabled: {
+    opacity: 0.5,
   },
   switchProfileButton: {
     alignItems: 'center',

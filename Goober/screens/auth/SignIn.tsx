@@ -1,19 +1,32 @@
 // /screens/SignIn.tsx
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SignInScreenProps } from '../types/navigation';
+import { useUser } from '../contexts/UserContext';
 
 export default function SignIn({ navigation }: SignInScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useUser();
 
-  const handleSignIn = () => {
-    // TODO: Implement sign in logic
-    console.log('Sign in:', { email, password });
-    // Navigate to Home after successful sign in
-    navigation.replace('Home');
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+    
+    const result = await login(email, password);
+    if (result.success) {
+      if (result.requires2FA) {
+        navigation.navigate('TwoFactorAuth' as never);
+      } else {
+        navigation.replace('Home');
+      }
+    } else {
+      Alert.alert('Error', result.error || 'Invalid email or password');
+    }
   };
 
   return (

@@ -5,10 +5,11 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { BookRideScreenProps } from '../types/navigation';
+import { useRide } from '../contexts/RideContext';
 
 export default function BookRide({ navigation }: BookRideScreenProps) {
-  const [isRoundTrip, setIsRoundTrip] = useState(false);
-  const [seats, setSeats] = useState(2);
+  const { booking, updateBooking } = useRide();
+  const [isRoundTrip, setIsRoundTrip] = useState(booking.isRoundTrip || false);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -32,15 +33,15 @@ export default function BookRide({ navigation }: BookRideScreenProps) {
             <Text style={styles.fieldLabel}>FROM</Text>
             <View style={styles.inputField}>
               <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
-              <Text style={styles.inputText}>Cold Stone Creamry, Yaba</Text>
+              <Text style={styles.inputText}>{booking.from?.name || 'Select location'}</Text>
             </View>
           </View>
 
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>TO</Text>
             <View style={styles.inputField}>
-              <Ionicons name="location-outline" size={16} color="#999" />
-              <Text style={styles.inputText}>Lekki Phase 1, Lekki</Text>
+              <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
+              <Text style={styles.inputText}>{booking.to?.name || 'Select location'}</Text>
             </View>
           </View>
 
@@ -67,16 +68,19 @@ export default function BookRide({ navigation }: BookRideScreenProps) {
               <Ionicons name="time-outline" size={20} color="#666" style={{ marginRight: 8 }} />
               <Text style={styles.infoLabel}>Depart</Text>
             </View>
-            <Text style={styles.infoValue}>06:00 AM</Text>
+            <Text style={styles.infoValue}>{booking.time || '06:00 AM'}</Text>
           </View>
 
           <View style={styles.infoRow}>
             <View style={styles.infoItem}>
-              <Ionicons name="person-outline" size={20} color="#666" />
+              <Ionicons name="person-outline" size={20} color="#666" style={{ marginRight: 8 }} />
               <Text style={styles.infoLabel}>Seats</Text>
             </View>
-            <TouchableOpacity style={styles.seatsSelector}>
-              <Text style={styles.infoValue}>{seats}</Text>
+            <TouchableOpacity 
+              style={styles.seatsSelector}
+              onPress={() => navigation.navigate('SelectSeats')}
+            >
+              <Text style={styles.infoValue}>{booking.seats || 1}</Text>
               <Ionicons name="chevron-down" size={16} color="#666" style={{ marginLeft: 4 }} />
             </TouchableOpacity>
           </View>
@@ -88,7 +92,10 @@ export default function BookRide({ navigation }: BookRideScreenProps) {
             </View>
             <Switch
               value={isRoundTrip}
-              onValueChange={setIsRoundTrip}
+              onValueChange={(value) => {
+                setIsRoundTrip(value);
+                updateBooking({ isRoundTrip: value });
+              }}
               trackColor={{ false: '#E5E5E5', true: '#4CAF50' }}
               thumbColor="#fff"
             />
@@ -137,17 +144,20 @@ export default function BookRide({ navigation }: BookRideScreenProps) {
 
       {/* Bottom Action Bar */}
       <View style={styles.bottomBar}>
-        <View style={styles.paymentMethod}>
+        <TouchableOpacity 
+          style={styles.paymentMethod}
+          onPress={() => navigation.navigate('Payment')}
+        >
           <View style={styles.cardIcon}>
             <View style={styles.mastercardCircle1} />
             <View style={styles.mastercardCircle2} />
           </View>
           <Text style={styles.cardText}>.... 5678</Text>
           <Ionicons name="chevron-forward" size={20} color="#999" style={{ marginLeft: 12 }} />
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.confirmButton}
-          onPress={() => navigation.navigate('AvailableRides')}
+          onPress={() => navigation.navigate('LookingForRides')}
         >
           <Text style={styles.confirmButtonText}>Confirm</Text>
         </TouchableOpacity>

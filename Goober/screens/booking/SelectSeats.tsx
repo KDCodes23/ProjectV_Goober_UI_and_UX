@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SelectSeatsScreenProps } from '../types/navigation';
+import { useRide } from '../contexts/RideContext';
 
 export default function SelectSeats({ navigation }: SelectSeatsScreenProps) {
-  const [seats, setSeats] = useState(1);
+  const { booking, updateBooking } = useRide();
+  const [seats, setSeats] = useState(booking.seats || 1);
 
   const handleDecrement = () => {
     if (seats > 1) {
@@ -21,6 +23,7 @@ export default function SelectSeats({ navigation }: SelectSeatsScreenProps) {
   };
 
   const handleConfirm = () => {
+    updateBooking({ seats });
     navigation.goBack();
   };
 

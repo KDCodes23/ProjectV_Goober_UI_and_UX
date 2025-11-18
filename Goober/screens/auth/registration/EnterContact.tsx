@@ -1,13 +1,16 @@
-// /screens/EnterName.tsx
+// /screens/EnterContact.tsx
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { EnterNameScreenProps } from '../types/navigation';
+import { EnterContactScreenProps } from '../types/navigation';
+import { useRegistration } from '../contexts/RegistrationContext';
 
-export default function EnterName({ navigation }: EnterNameScreenProps) {
-  const [name, setName] = useState('');
+export default function EnterContact({ navigation }: EnterContactScreenProps) {
+  const { registrationData, updateRegistrationData } = useRegistration();
+  const [phoneNumber, setPhoneNumber] = useState(registrationData.phone || '');
+  const [countryCode, setCountryCode] = useState('+234');
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -34,17 +37,23 @@ export default function EnterName({ navigation }: EnterNameScreenProps) {
 
         {/* Content */}
         <View style={styles.content}>
-          <Text style={styles.title}>Enter Your name</Text>
-          <Text style={styles.subtitle}>Enter your first name and last name</Text>
+          <Text style={styles.title}>Enter Your Contact Details</Text>
+          <Text style={styles.subtitle}>
+            Enter your phone number with valid country code so others can reach you
+          </Text>
 
-          <View style={styles.inputContainer}>
+          <View style={styles.inputRow}>
+            <TouchableOpacity style={styles.countryCodeButton}>
+              <Text style={styles.flag}>🇨🇦</Text>
+              <Ionicons name="chevron-down" size={16} color="#666" />
+            </TouchableOpacity>
             <TextInput
-              style={styles.input}
-              placeholder="First & Last name"
+              style={styles.phoneInput}
+              placeholder="Phone number"
               placeholderTextColor="#999"
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
             />
           </View>
         </View>
@@ -52,11 +61,14 @@ export default function EnterName({ navigation }: EnterNameScreenProps) {
         {/* Bottom Button */}
         <View style={styles.bottomContainer}>
           <TouchableOpacity
-            style={[styles.nextButton, name.length > 0 && styles.nextButtonActive]}
-            onPress={() => navigation.navigate('EnterContact')}
-            disabled={name.length === 0}
+            style={[styles.sendButton, phoneNumber.length > 0 && styles.sendButtonActive]}
+            onPress={() => {
+              updateRegistrationData({ phone: `${countryCode}${phoneNumber}` });
+              navigation.navigate('EnterEmail');
+            }}
+            disabled={phoneNumber.length === 0}
           >
-            <Text style={styles.nextButtonText}>Next</Text>
+            <Text style={styles.sendButtonText}>Send verification code</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -154,10 +166,33 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 40,
   },
-  inputContainer: {
+  inputRow: {
+    flexDirection: 'row',
     marginTop: 20,
   },
-  input: {
+  countryCodeButton: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    marginRight: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  flag: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  phoneInput: {
+    flex: 1,
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
@@ -176,17 +211,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
   },
-  nextButton: {
+  sendButton: {
     backgroundColor: '#FFD700',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     opacity: 0.5,
   },
-  nextButtonActive: {
+  sendButtonActive: {
     opacity: 1,
   },
-  nextButtonText: {
+  sendButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1A1A1A',

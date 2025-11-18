@@ -1,16 +1,21 @@
 // /screens/CreatePassword.tsx
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { CreatePasswordScreenProps } from '../types/navigation';
+import { useRegistration } from '../contexts/RegistrationContext';
+import { useUser } from '../contexts/UserContext';
 
 export default function CreatePassword({ navigation }: CreatePasswordScreenProps) {
+  const { registrationData, resetRegistrationData } = useRegistration();
+  const { register } = useUser();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const has8Chars = password.length >= 8;
   const hasUppercase = /[A-Z]/.test(password);
@@ -112,10 +117,30 @@ export default function CreatePassword({ navigation }: CreatePasswordScreenProps
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             style={[styles.createButton, isPasswordValid && styles.createButtonActive]}
-            onPress={() => navigation.replace('Home')}
-            disabled={!isPasswordValid}
+            onPress={async () => {
+              if (!isPasswordValid) return;
+              
+              setLoading(true);
+              const result = await register(
+                registrationData.email,
+                password,
+                registrationData.name,
+                registrationData.phone
+              );
+              setLoading(false);
+
+              if (result.success) {
+                resetRegistrationData();
+                navigation.replace('Home');
+              } else {
+                Alert.alert('Error', result.error || 'Registration failed');
+              }
+            }}
+            disabled={!isPasswordValid || loading}
           >
-            <Text style={styles.createButtonText}>Create Password</Text>
+            <Text style={styles.createButtonText}>
+              {loading ? 'Creating Account...' : 'Create Password'}
+            </Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

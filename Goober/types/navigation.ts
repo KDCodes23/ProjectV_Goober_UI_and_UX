@@ -26,6 +26,14 @@ export type RootStackParamList = {
   Payment: undefined;
   BookingConfirmed: undefined;
   LookingForRides: undefined;
+  RideRating: undefined;
+  LeaveComment: undefined;
+  RideCompleted: undefined;
+  BookingAccepted: undefined;
+  DriverEnRoute: undefined;
+  DriverArrived: undefined;
+  InTripMap: undefined;
+  TwoFactorAuth: undefined;
 };
 
 export type SplashScreenProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
@@ -51,4 +59,12 @@ export type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'Pro
 export type PaymentScreenProps = NativeStackScreenProps<RootStackParamList, 'Payment'>;
 export type BookingConfirmedScreenProps = NativeStackScreenProps<RootStackParamList, 'BookingConfirmed'>;
 export type LookingForRidesScreenProps = NativeStackScreenProps<RootStackParamList, 'LookingForRides'>;
+export type RideRatingScreenProps = NativeStackScreenProps<RootStackParamList, 'RideRating'>;
+export type LeaveCommentScreenProps = NativeStackScreenProps<RootStackParamList, 'LeaveComment'>;
+export type RideCompletedScreenProps = NativeStackScreenProps<RootStackParamList, 'RideCompleted'>;
+export type BookingAcceptedScreenProps = NativeStackScreenProps<RootStackParamList, 'BookingAccepted'>;
+export type DriverEnRouteScreenProps = NativeStackScreenProps<RootStackParamList, 'DriverEnRoute'>;
+export type DriverArrivedScreenProps = NativeStackScreenProps<RootStackParamList, 'DriverArrived'>;
+export type InTripMapScreenProps = NativeStackScreenProps<RootStackParamList, 'InTripMap'>;
+export type TwoFactorAuthScreenProps = NativeStackScreenProps<RootStackParamList, 'TwoFactorAuth'>;
 

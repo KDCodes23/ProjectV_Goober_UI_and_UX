@@ -1,12 +1,16 @@
 // /screens/EmailVerification.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { EmailVerificationScreenProps } from '../types/navigation';
+import { useRegistration } from '../contexts/RegistrationContext';
+import { useUser } from '../contexts/UserContext';
 
 export default function EmailVerification({ navigation }: EmailVerificationScreenProps) {
+  const { registrationData, updateRegistrationData } = useRegistration();
+  const { sendVerificationCode, verifyCode } = useUser();
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
   const inputRefs = useRef<(TextInput | null)[]>([]);
@@ -108,7 +112,16 @@ export default function EmailVerification({ navigation }: EmailVerificationScree
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             style={[styles.verifyButton, isCodeComplete && styles.verifyButtonActive]}
-            onPress={() => navigation.navigate('CreatePassword')}
+            onPress={async () => {
+              const codeString = code.join('');
+              const result = await verifyCode(codeString, 'email');
+              if (result.success) {
+                updateRegistrationData({ emailVerified: true });
+                navigation.navigate('CreatePassword');
+              } else {
+                Alert.alert('Error', result.error || 'Invalid verification code');
+              }
+            }}
             disabled={!isCodeComplete}
           >
             <Text style={styles.verifyButtonText}>Verify code</Text>

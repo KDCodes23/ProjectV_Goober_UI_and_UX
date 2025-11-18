@@ -5,6 +5,8 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Keyboard
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { SelectLocationScreenProps } from '../types/navigation';
+import { useRide, Location } from '../contexts/RideContext';
+import { MapService } from '../services/mapService';
 
 interface LocationItem {
   id: string;
@@ -23,6 +25,7 @@ const mockLocations: LocationItem[] = [
 
 export default function SelectLocation({ navigation, route }: SelectLocationScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const { updateBooking } = useRide();
   const isFrom = route.params?.type === 'from';
   const title = isFrom ? 'Where are you leaving from?' : 'Where are you heading?';
 
@@ -32,8 +35,23 @@ export default function SelectLocation({ navigation, route }: SelectLocationScre
       location.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectLocation = (location: LocationItem) => {
-    // TODO: Save selected location and navigate back
+  const handleSelectLocation = async (location: LocationItem) => {
+    // Geocode the address to get coordinates
+    const coords = await MapService.geocodeAddress(location.address || location.name);
+    
+    const locationData: Location = {
+      name: location.name,
+      address: location.address,
+      latitude: coords?.latitude,
+      longitude: coords?.longitude,
+    };
+    
+    if (isFrom) {
+      updateBooking({ from: locationData });
+    } else {
+      updateBooking({ to: locationData });
+    }
+    
     navigation.goBack();
   };
 
@@ -43,8 +61,8 @@ export default function SelectLocation({ navigation, route }: SelectLocationScre
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        {/* Header */}
-        <View style={styles.header}>
+        {/* Yellow Header */}
+        <View style={styles.yellowHeader}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
@@ -111,12 +129,13 @@ export default function SelectLocation({ navigation, route }: SelectLocationScre
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFDE7',
   },
   keyboardView: {
     flex: 1,
   },
-  header: {
+  yellowHeader: {
+    backgroundColor: '#FF8800',
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 20,
@@ -125,7 +144,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -137,6 +156,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 20,
+    marginTop: 20,
     marginBottom: 20,
   },
   searchInputContainer: {

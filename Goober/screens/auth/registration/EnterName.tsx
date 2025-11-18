@@ -1,13 +1,15 @@
-// /screens/EnterEmail.tsx
+// /screens/EnterName.tsx
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { EnterEmailScreenProps } from '../types/navigation';
+import { EnterNameScreenProps } from '../types/navigation';
+import { useRegistration } from '../contexts/RegistrationContext';
 
-export default function EnterEmail({ navigation }: EnterEmailScreenProps) {
-  const [email, setEmail] = useState('');
+export default function EnterName({ navigation }: EnterNameScreenProps) {
+  const { registrationData, updateRegistrationData } = useRegistration();
+  const [name, setName] = useState(registrationData.name || '');
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -34,20 +36,17 @@ export default function EnterEmail({ navigation }: EnterEmailScreenProps) {
 
         {/* Content */}
         <View style={styles.content}>
-          <Text style={styles.title}>Enter Your Email Address</Text>
-          <Text style={styles.subtitle}>
-            Enter your email address so we can verify your account
-          </Text>
+          <Text style={styles.title}>Enter Your name</Text>
+          <Text style={styles.subtitle}>Enter your first name and last name</Text>
 
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder="First & Last name"
               placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
+              value={name}
+              onChangeText={setName}
+              autoCapitalize="words"
             />
           </View>
         </View>
@@ -55,11 +54,14 @@ export default function EnterEmail({ navigation }: EnterEmailScreenProps) {
         {/* Bottom Button */}
         <View style={styles.bottomContainer}>
           <TouchableOpacity
-            style={[styles.sendButton, email.length > 0 && styles.sendButtonActive]}
-            onPress={() => navigation.navigate('EmailVerification')}
-            disabled={email.length === 0}
+            style={[styles.nextButton, name.length > 0 && styles.nextButtonActive]}
+            onPress={() => {
+              updateRegistrationData({ name });
+              navigation.navigate('EnterContact');
+            }}
+            disabled={name.length === 0}
           >
-            <Text style={styles.sendButtonText}>Send verification code</Text>
+            <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -179,17 +181,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
   },
-  sendButton: {
+  nextButton: {
     backgroundColor: '#FFD700',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     opacity: 0.5,
   },
-  sendButtonActive: {
+  nextButtonActive: {
     opacity: 1,
   },
-  sendButtonText: {
+  nextButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1A1A1A',
