@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { EnterEmailScreenProps } from '../types/navigation';
-import { useRegistration } from '../contexts/RegistrationContext';
+import { EnterEmailScreenProps } from '../../../types/navigation';
+import { useRegistration } from '../../../contexts/RegistrationContext';
 
 export default function EnterEmail({ navigation }: EnterEmailScreenProps) {
   const { registrationData, updateRegistrationData } = useRegistration();

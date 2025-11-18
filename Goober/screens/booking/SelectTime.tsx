@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { SelectTimeScreenProps } from '../types/navigation';
-import { useRide } from '../contexts/RideContext';
+import { SelectTimeScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
 
 const generateTimeSlots = () => {
   const times = [];

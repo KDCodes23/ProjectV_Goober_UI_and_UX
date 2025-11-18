@@ -1,10 +1,23 @@
 // /components/LiveMap.tsx
 
 import React, { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, StyleSheet, Dimensions, Text, Platform } from 'react-native';
 import { MapService, MapLocation } from '../services/mapService';
 import { Ionicons } from '@expo/vector-icons';
+
+// Conditionally import react-native-maps only on native platforms
+let MapView: any, Marker: any, Polyline: any, PROVIDER_GOOGLE: any;
+if (Platform.OS !== 'web') {
+  try {
+    const Maps = require('react-native-maps');
+    MapView = Maps.default;
+    Marker = Maps.Marker;
+    Polyline = Maps.Polyline;
+    PROVIDER_GOOGLE = Maps.PROVIDER_GOOGLE;
+  } catch (error) {
+    console.warn('react-native-maps not available:', error);
+  }
+}
 
 interface LiveMapProps {
   origin?: MapLocation;
@@ -24,12 +37,8 @@ export default function LiveMap({
   onLocationUpdate,
 }: LiveMapProps) {
   const [currentLocation, setCurrentLocation] = useState<MapLocation | null>(null);
-  const [region, setRegion] = useState<MapLocation>({
-    latitude: 6.5244, // Default to Lagos, Nigeria
-    longitude: 3.3792,
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.1,
-  });
+  const [region, setRegion] = useState<MapLocation | null>(null);
+  const [loadingLocation, setLoadingLocation] = useState(true);
   const mapRef = useRef<MapView>(null);
   const locationSubscriptionRef = useRef<any>(null);
 
@@ -53,36 +62,43 @@ export default function LiveMap({
       const latDelta = (maxLat - minLat) * 1.5;
       const lonDelta = (maxLon - minLon) * 1.5;
 
-      setRegion({
+      const newRegion = {
         latitude: (minLat + maxLat) / 2,
         longitude: (minLon + maxLon) / 2,
         latitudeDelta: Math.max(latDelta, 0.01),
         longitudeDelta: Math.max(lonDelta, 0.01),
-      });
+      };
 
-      if (mapRef.current) {
-        mapRef.current.animateToRegion({
-          latitude: (minLat + maxLat) / 2,
-          longitude: (minLon + maxLon) / 2,
-          latitudeDelta: Math.max(latDelta, 0.01),
-          longitudeDelta: Math.max(lonDelta, 0.01),
-        });
+      setRegion(newRegion);
+
+      if (mapRef.current && Platform.OS !== 'web') {
+        mapRef.current.animateToRegion(newRegion);
       }
     } else if (currentLocation) {
-      setRegion({
+      const newRegion = {
         ...currentLocation,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
+        latitudeDelta: currentLocation.latitudeDelta || 0.05,
+        longitudeDelta: currentLocation.longitudeDelta || 0.05,
+      };
+      setRegion(newRegion);
+      
+      if (mapRef.current && Platform.OS !== 'web') {
+        mapRef.current.animateToRegion(newRegion);
+      }
     }
   }, [origin, destination, currentLocation]);
 
   const initializeMap = async () => {
     if (showCurrentLocation) {
+      setLoadingLocation(true);
       const location = await MapService.getCurrentLocation();
       if (location) {
         setCurrentLocation(location);
-        setRegion(location);
+        setRegion({
+          ...location,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        });
         onLocationUpdate?.(location);
 
         // Start watching location
@@ -91,7 +107,19 @@ export default function LiveMap({
           onLocationUpdate?.(loc);
         });
         locationSubscriptionRef.current = subscription;
+      } else {
+        // Fallback to a default location if GPS fails (e.g., on web without permission)
+        console.warn('Could not get current location, using default');
+        setRegion({
+          latitude: 40.7128, // Default to New York, USA
+          longitude: -74.0060,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+        });
       }
+      setLoadingLocation(false);
+    } else {
+      setLoadingLocation(false);
     }
   };
 
@@ -101,6 +129,43 @@ export default function LiveMap({
         { latitude: destination.latitude, longitude: destination.longitude },
       ]
     : [];
+
+  // Web fallback - show a placeholder view
+  if (Platform.OS === 'web' || !MapView) {
+    return (
+      <View style={[styles.container, styles.webFallback]}>
+        <View style={styles.webFallbackContent}>
+          <Ionicons name="map" size={48} color="#666" />
+          <Text style={styles.webFallbackText}>Map View</Text>
+          {origin && (
+            <Text style={styles.webFallbackSubtext}>
+              From: {origin.address || `${origin.latitude}, ${origin.longitude}`}
+            </Text>
+          )}
+          {destination && (
+            <Text style={styles.webFallbackSubtext}>
+              To: {destination.address || `${destination.latitude}, ${destination.longitude}`}
+            </Text>
+          )}
+          <Text style={styles.webFallbackNote}>
+            Maps are available on iOS and Android
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Don't render map if region is not set yet
+  if (!region) {
+    return (
+      <View style={[styles.container, styles.webFallback]}>
+        <View style={styles.webFallbackContent}>
+          <Ionicons name="map" size={48} color="#666" />
+          <Text style={styles.webFallbackText}>Loading map...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -164,6 +229,34 @@ export default function LiveMap({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  webFallback: {
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  webFallbackContent: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  webFallbackText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  webFallbackSubtext: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  webFallbackNote: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 16,
+    fontStyle: 'italic',
   },
   map: {
     width: width,

@@ -4,8 +4,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { ProfileScreenProps } from '../types/navigation';
-import { useUser } from '../contexts/UserContext';
+import { ProfileScreenProps } from '../../types/navigation';
+import { useUser } from '../../contexts/UserContext';
 
 export default function Profile({ navigation }: ProfileScreenProps) {
   const { user } = useUser();

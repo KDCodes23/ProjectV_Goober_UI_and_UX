@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { LeaveCommentScreenProps } from '../types/navigation';
+import { LeaveCommentScreenProps } from '../../types/navigation';
 
 export default function LeaveComment({ navigation }: LeaveCommentScreenProps) {
   const [comment, setComment] = useState('');

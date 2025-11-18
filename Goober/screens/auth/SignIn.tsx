@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SignInScreenProps } from '../types/navigation';
-import { useUser } from '../contexts/UserContext';
+import { SignInScreenProps } from '../../types/navigation';
+import { useUser } from '../../contexts/UserContext';
 
 export default function SignIn({ navigation }: SignInScreenProps) {
   const [email, setEmail] = useState('');

@@ -4,9 +4,11 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { WelcomeScreenProps } from '../types/navigation';
+import { WelcomeScreenProps } from '../../types/navigation';
 
 export default function Welcome({ navigation }: WelcomeScreenProps) {
+  console.log('🎉 Welcome screen rendering!');
+  
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Yellow Dripping Design at Top */}
@@ -20,20 +22,11 @@ export default function Welcome({ navigation }: WelcomeScreenProps) {
 
       {/* GOOBER Logo with Yellow O */}
       <View style={styles.logoContainer}>
-        <Image
-          source={require('../assets/Icon_Goober.png')}
-          style={styles.logoIcon}
-          resizeMode="contain"
-        />
         <View style={styles.titleContainer}>
           <Text style={styles.title}>G</Text>
           <Text style={styles.title}>O</Text>
           <View style={styles.yellowO}>
-            <Image
-              source={require('../assets/Icon_Goober.png')}
-              style={styles.yellowOIcon}
-              resizeMode="contain"
-            />
+            <Text style={styles.yellowOText}>O</Text>
           </View>
           <Text style={styles.title}>BER</Text>
         </View>
@@ -197,9 +190,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  yellowOIcon: {
-    width: 30,
-    height: 30,
+  yellowOText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
   },
   buttonsContainer: {
     paddingHorizontal: 20,

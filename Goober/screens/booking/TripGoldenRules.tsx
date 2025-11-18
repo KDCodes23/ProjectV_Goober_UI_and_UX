@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { TripGoldenRulesScreenProps } from '../types/navigation';
+import { TripGoldenRulesScreenProps } from '../../types/navigation';
 
 const rules = [
   {

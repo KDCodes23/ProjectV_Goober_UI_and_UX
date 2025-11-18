@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SplashScreenProps } from '../types/navigation';
+import { SplashScreenProps } from '../../types/navigation';
 
 export default function Splash({ navigation }: SplashScreenProps) {
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function Splash({ navigation }: SplashScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <Image
-        source={require('../assets/Icon_Goober.png')}
+        source={require('../../assets/Icon_Goober.png')}
         style={styles.logo}
         resizeMode="contain"
       />

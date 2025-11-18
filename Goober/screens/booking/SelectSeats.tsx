@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SelectSeatsScreenProps } from '../types/navigation';
-import { useRide } from '../contexts/RideContext';
+import { SelectSeatsScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
 
 export default function SelectSeats({ navigation }: SelectSeatsScreenProps) {
   const { booking, updateBooking } = useRide();

@@ -1,15 +1,48 @@
 // /screens/BookRide.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { BookRideScreenProps } from '../types/navigation';
-import { useRide } from '../contexts/RideContext';
+import { BookRideScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
+import { MapService } from '../../services/mapService';
 
 export default function BookRide({ navigation }: BookRideScreenProps) {
   const { booking, updateBooking } = useRide();
   const [isRoundTrip, setIsRoundTrip] = useState(booking.isRoundTrip || false);
+  
+  // Calculate distance and cost
+  const tripInfo = useMemo(() => {
+    if (booking.from?.latitude && booking.from?.longitude && 
+        booking.to?.latitude && booking.to?.longitude) {
+      const distanceKm = MapService.calculateDistance(
+        booking.from.latitude,
+        booking.from.longitude,
+        booking.to.latitude,
+        booking.to.longitude
+      );
+      const distanceMiles = MapService.kmToMiles(distanceKm);
+      const cost = MapService.calculateTripCost(distanceKm);
+      const timeMinutes = MapService.calculateTripTime(distanceKm);
+      
+      // Calculate return trip if round trip
+      let returnCost = 0;
+      if (isRoundTrip) {
+        returnCost = cost; // Same cost for return
+      }
+      
+      return {
+        distanceKm,
+        distanceMiles,
+        cost,
+        returnCost,
+        totalCost: cost + returnCost,
+        timeMinutes,
+      };
+    }
+    return null;
+  }, [booking.from, booking.to, isRoundTrip]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -135,10 +168,42 @@ export default function BookRide({ navigation }: BookRideScreenProps) {
           </View>
         )}
 
+        {/* Trip Info */}
+        {tripInfo && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Trip Details</Text>
+            <View style={styles.infoRow}>
+              <View style={styles.infoItem}>
+                <Ionicons name="navigate-outline" size={20} color="#666" style={{ marginRight: 8 }} />
+                <Text style={styles.infoLabel}>Distance</Text>
+              </View>
+              <Text style={styles.infoValue}>{tripInfo.distanceMiles} mi ({tripInfo.distanceKm.toFixed(1)} km)</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <View style={styles.infoItem}>
+                <Ionicons name="time-outline" size={20} color="#666" style={{ marginRight: 8 }} />
+                <Text style={styles.infoLabel}>Est. Time</Text>
+              </View>
+              <Text style={styles.infoValue}>{tripInfo.timeMinutes} min</Text>
+            </View>
+            {isRoundTrip && (
+              <View style={styles.infoRow}>
+                <View style={styles.infoItem}>
+                  <Ionicons name="arrow-redo-outline" size={20} color="#666" style={{ marginRight: 8 }} />
+                  <Text style={styles.infoLabel}>Return Trip</Text>
+                </View>
+                <Text style={styles.infoValue}>${tripInfo.returnCost.toFixed(2)}</Text>
+              </View>
+            )}
+          </View>
+        )}
+
         {/* Total Price */}
         <View style={styles.priceSection}>
           <Text style={styles.priceLabel}>Total price</Text>
-          <Text style={styles.priceValue}>$25</Text>
+          <Text style={styles.priceValue}>
+            ${tripInfo ? tripInfo.totalCost.toFixed(2) : '0.00'}
+          </Text>
         </View>
       </ScrollView>
 

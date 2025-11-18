@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { SelectDateScreenProps } from '../types/navigation';
-import { useRide } from '../contexts/RideContext';
+import { SelectDateScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 

@@ -4,16 +4,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { EmailVerificationScreenProps } from '../types/navigation';
-import { useRegistration } from '../contexts/RegistrationContext';
-import { useUser } from '../contexts/UserContext';
+import { EmailVerificationScreenProps } from '../../../types/navigation';
+import { useRegistration } from '../../../contexts/RegistrationContext';
+import { useUser } from '../../../contexts/UserContext';
 
 export default function EmailVerification({ navigation }: EmailVerificationScreenProps) {
   const { registrationData, updateRegistrationData } = useRegistration();
-  const { sendVerificationCode, verifyCode } = useUser();
+  const { sendVerificationCode, verifyCode, user } = useUser();
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const [sentCode, setSentCode] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+
+  // Send verification code when screen loads
+  useEffect(() => {
+    sendCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -28,6 +36,42 @@ export default function EmailVerification({ navigation }: EmailVerificationScree
 
     return () => clearInterval(timer);
   }, []);
+
+  const sendCode = async () => {
+    if (!registrationData.email) {
+      Alert.alert('Error', 'No email address found');
+      return;
+    }
+
+    setSending(true);
+    try {
+      // Use registration email if user is not logged in yet
+      const email = registrationData.email;
+      const userId = user?.id || null;
+      
+      // Import SupabaseService directly for registration flow
+      const { SupabaseService } = await import('../../../services/supabaseService');
+      const result = await SupabaseService.sendEmailVerificationCode(userId, email);
+      
+      if (result.success && result.code) {
+        setSentCode(result.code);
+        setTimeLeft(600); // Reset timer
+        // Show code in alert for development (remove in production)
+        Alert.alert(
+          'Verification Code Sent',
+          `Your verification code is: ${result.code}\n\n(For development - check console for details)`,
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert('Error', result.error || 'Failed to send verification code');
+      }
+    } catch (error: any) {
+      console.error('Error sending verification code:', error);
+      Alert.alert('Error', 'Failed to send verification code. Please try again.');
+    } finally {
+      setSending(false);
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -54,6 +98,36 @@ export default function EmailVerification({ navigation }: EmailVerificationScree
   };
 
   const isCodeComplete = code.every((digit) => digit !== '');
+
+  const handleVerify = async () => {
+    const codeString = code.join('');
+    
+    // For development: allow using the sent code
+    if (sentCode && codeString === sentCode) {
+      updateRegistrationData({ emailVerified: true });
+      navigation.navigate('CreatePassword');
+      return;
+    }
+
+    // Try verification through service
+    try {
+      const result = await verifyCode(codeString, 'email');
+      if (result.success) {
+        updateRegistrationData({ emailVerified: true });
+        navigation.navigate('CreatePassword');
+      } else {
+        Alert.alert('Error', result.error || 'Invalid verification code');
+      }
+    } catch (error: any) {
+      // Fallback: if verification service fails but code matches, accept it
+      if (sentCode && codeString === sentCode) {
+        updateRegistrationData({ emailVerified: true });
+        navigation.navigate('CreatePassword');
+      } else {
+        Alert.alert('Error', 'Invalid verification code');
+      }
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -82,7 +156,8 @@ export default function EmailVerification({ navigation }: EmailVerificationScree
         <View style={styles.content}>
           <Text style={styles.title}>We sent you an Email</Text>
           <Text style={styles.subtitle}>
-            Please enter the code we just sent to your email.
+            Please enter the code we just sent to{'\n'}
+            <Text style={styles.emailText}>{registrationData.email || 'your email'}</Text>
           </Text>
 
           <View style={styles.codeContainer}>
@@ -102,26 +177,37 @@ export default function EmailVerification({ navigation }: EmailVerificationScree
           </View>
 
           <View style={styles.resendContainer}>
-            <Text style={styles.resendText}>
-              Resend code in <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
-            </Text>
+            {timeLeft > 0 ? (
+              <Text style={styles.resendText}>
+                Resend code in <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+              </Text>
+            ) : (
+              <TouchableOpacity
+                onPress={sendCode}
+                disabled={sending}
+                style={styles.resendButton}
+              >
+                <Text style={styles.resendButtonText}>
+                  {sending ? 'Sending...' : 'Resend code'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
+
+          {/* Show code for development */}
+          {sentCode && __DEV__ && (
+            <View style={styles.devCodeContainer}>
+              <Text style={styles.devCodeLabel}>Development Mode - Code:</Text>
+              <Text style={styles.devCode}>{sentCode}</Text>
+            </View>
+          )}
         </View>
 
         {/* Bottom Button */}
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             style={[styles.verifyButton, isCodeComplete && styles.verifyButtonActive]}
-            onPress={async () => {
-              const codeString = code.join('');
-              const result = await verifyCode(codeString, 'email');
-              if (result.success) {
-                updateRegistrationData({ emailVerified: true });
-                navigation.navigate('CreatePassword');
-              } else {
-                Alert.alert('Error', result.error || 'Invalid verification code');
-              }
-            }}
+            onPress={handleVerify}
             disabled={!isCodeComplete}
           >
             <Text style={styles.verifyButtonText}>Verify code</Text>
@@ -225,6 +311,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     textAlign: 'center',
   },
+  emailText: {
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
   codeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -260,6 +350,36 @@ const styles = StyleSheet.create({
     color: '#FF6B35',
     fontWeight: '600',
     textDecorationLine: 'underline',
+  },
+  resendButton: {
+    paddingVertical: 8,
+  },
+  resendButtonText: {
+    fontSize: 14,
+    color: '#FF6B35',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  devCodeContainer: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: '#FFF3CD',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFC107',
+  },
+  devCodeLabel: {
+    fontSize: 12,
+    color: '#856404',
+    marginBottom: 8,
+    fontWeight: '600',
+  },
+  devCode: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#856404',
+    letterSpacing: 4,
+    textAlign: 'center',
   },
   bottomContainer: {
     paddingHorizontal: 20,

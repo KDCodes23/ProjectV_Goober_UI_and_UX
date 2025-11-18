@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { CreatePasswordScreenProps } from '../types/navigation';
-import { useRegistration } from '../contexts/RegistrationContext';
-import { useUser } from '../contexts/UserContext';
+import { CreatePasswordScreenProps } from '../../../types/navigation';
+import { useRegistration } from '../../../contexts/RegistrationContext';
+import { useUser } from '../../../contexts/UserContext';
 
 export default function CreatePassword({ navigation }: CreatePasswordScreenProps) {
   const { registrationData, resetRegistrationData } = useRegistration();

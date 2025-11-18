@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SignUpScreenProps } from '../types/navigation';
+import { SignUpScreenProps } from '../../types/navigation';
 
 export default function SignUp({ navigation }: SignUpScreenProps) {
   const [name, setName] = useState('');

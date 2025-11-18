@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { RideRatingScreenProps } from '../types/navigation';
+import { RideRatingScreenProps } from '../../types/navigation';
 
 interface Passenger {
   id: string;

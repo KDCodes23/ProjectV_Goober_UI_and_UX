@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { OtherPassengersScreenProps } from '../types/navigation';
+import { OtherPassengersScreenProps } from '../../types/navigation';
 
 interface Passenger {
   id: string;

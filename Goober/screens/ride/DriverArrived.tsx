@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { DriverArrivedScreenProps } from '../types/navigation';
+import { DriverArrivedScreenProps } from '../../types/navigation';
 
 export default function DriverArrived({ navigation }: DriverArrivedScreenProps) {
   const code = '7593';

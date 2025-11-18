@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { RideCompletedScreenProps } from '../types/navigation';
+import { RideCompletedScreenProps } from '../../types/navigation';
 
 export default function RideCompleted({ navigation }: RideCompletedScreenProps) {
   useEffect(() => {

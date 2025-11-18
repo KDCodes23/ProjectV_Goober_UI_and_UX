@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { InTripMapScreenProps } from '../types/navigation';
-import { useRide } from '../contexts/RideContext';
-import LiveMap from '../components/LiveMap';
-import { MapService, MapLocation } from '../services/mapService';
+import { InTripMapScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
+import LiveMap from '../../components/LiveMap';
+import { MapService, MapLocation } from '../../services/mapService';
 
 export default function InTripMap({ navigation }: InTripMapScreenProps) {
   const { activeRide } = useRide();

@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { DriverEnRouteScreenProps } from '../types/navigation';
+import { DriverEnRouteScreenProps } from '../../types/navigation';
 
 export default function DriverEnRoute({ navigation }: DriverEnRouteScreenProps) {
   return (

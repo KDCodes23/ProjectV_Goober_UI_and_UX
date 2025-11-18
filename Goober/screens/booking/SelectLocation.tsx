@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { SelectLocationScreenProps } from '../types/navigation';
-import { useRide, Location } from '../contexts/RideContext';
-import { MapService } from '../services/mapService';
+import { SelectLocationScreenProps } from '../../types/navigation';
+import { useRide, Location } from '../../contexts/RideContext';
+import { MapService } from '../../services/mapService';
 
 interface LocationItem {
   id: string;
@@ -25,6 +25,7 @@ const mockLocations: LocationItem[] = [
 
 export default function SelectLocation({ navigation, route }: SelectLocationScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const { updateBooking } = useRide();
   const isFrom = route.params?.type === 'from';
   const title = isFrom ? 'Where are you leaving from?' : 'Where are you heading?';
@@ -53,6 +54,37 @@ export default function SelectLocation({ navigation, route }: SelectLocationScre
     }
     
     navigation.goBack();
+  };
+
+  const handleUseCurrentLocation = async () => {
+    setLoadingLocation(true);
+    try {
+      const currentLocation = await MapService.getCurrentLocation();
+      if (currentLocation) {
+        const address = currentLocation.address || 'Current Location';
+        const locationData: Location = {
+          name: address,
+          address: address,
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        };
+        
+        if (isFrom) {
+          updateBooking({ from: locationData });
+        } else {
+          updateBooking({ to: locationData });
+        }
+        
+        navigation.goBack();
+      } else {
+        alert('Could not get your current location. Please enable location permissions.');
+      }
+    } catch (error) {
+      console.error('Error getting current location:', error);
+      alert('Error getting your location. Please try again.');
+    } finally {
+      setLoadingLocation(false);
+    }
   };
 
   return (
@@ -91,9 +123,15 @@ export default function SelectLocation({ navigation, route }: SelectLocationScre
             )}
           </View>
 
-          <TouchableOpacity style={styles.currentLocationButton}>
+          <TouchableOpacity 
+            style={styles.currentLocationButton}
+            onPress={handleUseCurrentLocation}
+            disabled={loadingLocation}
+          >
             <Ionicons name="locate-outline" size={20} color="#1A1A1A" />
-            <Text style={styles.currentLocationText}>Use current location</Text>
+            <Text style={styles.currentLocationText}>
+              {loadingLocation ? 'Getting location...' : 'Use current location'}
+            </Text>
           </TouchableOpacity>
         </View>
 

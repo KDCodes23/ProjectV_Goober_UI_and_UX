@@ -4,9 +4,9 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { BookingAcceptedScreenProps } from '../types/navigation';
-import { useUser } from '../contexts/UserContext';
-import { useRide } from '../contexts/RideContext';
+import { BookingAcceptedScreenProps } from '../../types/navigation';
+import { useUser } from '../../contexts/UserContext';
+import { useRide } from '../../contexts/RideContext';
 
 export default function BookingAccepted({ navigation }: BookingAcceptedScreenProps) {
   const { user } = useUser();

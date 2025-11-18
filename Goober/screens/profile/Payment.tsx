@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { PaymentScreenProps } from '../types/navigation';
+import { PaymentScreenProps } from '../../types/navigation';
 
 export default function Payment({ navigation }: PaymentScreenProps) {
   const [gooberCashEnabled, setGooberCashEnabled] = useState(true);

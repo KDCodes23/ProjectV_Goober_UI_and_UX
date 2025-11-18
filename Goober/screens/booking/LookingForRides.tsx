@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { LookingForRidesScreenProps } from '../types/navigation';
+import { LookingForRidesScreenProps } from '../../types/navigation';
 
 export default function LookingForRides({ navigation }: LookingForRidesScreenProps) {
   useEffect(() => {
