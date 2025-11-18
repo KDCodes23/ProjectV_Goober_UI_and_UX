@@ -61,7 +61,7 @@ export default function TripGoldenRules({ navigation }: TripGoldenRulesScreenPro
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={styles.acceptButton}
-          onPress={() => navigation.navigate('Payment')}
+          onPress={() => navigation.navigate('BookingConfirmed')}
         >
           <Text style={styles.acceptButtonText}>Accept</Text>
         </TouchableOpacity>

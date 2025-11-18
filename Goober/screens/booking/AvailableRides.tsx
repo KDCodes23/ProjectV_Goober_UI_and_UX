@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { AvailableRidesScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
 
 interface Driver {
   id: string;
@@ -19,18 +20,28 @@ interface Driver {
 }
 
 const drivers: Driver[] = [
-  { id: '1', name: 'Olakunle Diran', rating: 4.9, trips: 50, departTime: '06:00 AM', distance: '0.3km away', price: 25, isPrevious: true },
-  { id: '2', name: 'Oduola Toyosi', rating: 4.5, trips: 30, departTime: '06:15 AM', distance: '0.4km away', price: 30, isPrevious: true },
-  { id: '3', name: 'Emmanuel Ismail', rating: 4.3, trips: 25, departTime: '06:15 AM', distance: '0.4km away', price: 33, isPrevious: true },
-  { id: '4', name: 'Ogunderu Noah', rating: 4.2, trips: 20, departTime: '06:00 AM', distance: '0.3km away', price: 25 },
-  { id: '5', name: 'Subomi Fortune', rating: 4.6, trips: 35, departTime: '06:15 AM', distance: '0.4km away', price: 26 },
+  { id: '1', name: 'Michael Johnson', rating: 4.9, trips: 50, departTime: '06:00 AM', distance: '0.3km away', price: 25, isPrevious: true },
+  { id: '2', name: 'Sarah Williams', rating: 4.5, trips: 30, departTime: '06:15 AM', distance: '0.4km away', price: 30, isPrevious: true },
+  { id: '3', name: 'David Brown', rating: 4.3, trips: 25, departTime: '06:15 AM', distance: '0.4km away', price: 33, isPrevious: true },
+  { id: '4', name: 'Emily Davis', rating: 4.2, trips: 20, departTime: '06:00 AM', distance: '0.3km away', price: 25 },
+  { id: '5', name: 'James Miller', rating: 4.6, trips: 35, departTime: '06:15 AM', distance: '0.4km away', price: 26 },
 ];
 
 export default function AvailableRides({ navigation }: AvailableRidesScreenProps) {
+  const { booking } = useRide();
   const [filter, setFilter] = useState<'all' | 'male' | 'female'>('all');
 
   const previousDrivers = drivers.filter((d) => d.isPrevious);
   const contactDrivers = drivers.filter((d) => !d.isPrevious);
+
+  // Format booking data for display
+  const fromName = booking.from?.name || 'Select location';
+  const fromAddress = booking.from?.address?.split(',')[1]?.trim() || '';
+  const toName = booking.to?.name || 'Select location';
+  const toAddress = booking.to?.address?.split(',')[1]?.trim() || '';
+  const tripDate = booking.date || 'Fri 18 Aug';
+  const tripTime = booking.time || '06:00 AM';
+  const seats = booking.seats || 1;
 
   const renderDriverCard = (driver: Driver) => (
     <TouchableOpacity
@@ -71,17 +82,17 @@ export default function AvailableRides({ navigation }: AvailableRidesScreenProps
             <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
           </TouchableOpacity>
           <View style={styles.routeInfo}>
-            <Text style={styles.routeFrom}>Cold Stone</Text>
-            <Text style={styles.routeLocation}>Yaba</Text>
+            <Text style={styles.routeFrom} numberOfLines={1}>{fromName}</Text>
+            {fromAddress ? <Text style={styles.routeLocation}>{fromAddress}</Text> : null}
             <Ionicons name="arrow-forward" size={16} color="#666" style={styles.routeArrow} />
-            <Text style={styles.routeTo}>Lekki Phase 1,</Text>
-            <Text style={styles.routeLocation}>Lekki</Text>
+            <Text style={styles.routeTo} numberOfLines={1}>{toName}</Text>
+            {toAddress ? <Text style={styles.routeLocation}>{toAddress}</Text> : null}
           </View>
         </View>
 
         {/* Trip Info */}
         <View style={styles.tripInfo}>
-          <Text style={styles.tripText}>Fri 18 Aug • 06:00 AM • 2 Seats</Text>
+          <Text style={styles.tripText}>{tripDate} • {tripTime} • {seats} {seats === 1 ? 'Seat' : 'Seats'}</Text>
         </View>
 
         {/* Filters */}

@@ -32,7 +32,7 @@ export default function LeaveComment({ navigation }: LeaveCommentScreenProps) {
             {/* Ride Info */}
             <View style={styles.rideInfo}>
               <View style={styles.rideDetails}>
-                <Text style={styles.rideText}>Ride share with Diran Olakunle</Text>
+                <Text style={styles.rideText}>Ride share with Michael Johnson</Text>
                 <Text style={styles.rideDate}>Fri 18 Aug, 06:00 AM</Text>
               </View>
               <View style={styles.driverImage}>

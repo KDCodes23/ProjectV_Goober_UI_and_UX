@@ -5,8 +5,11 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LookingForRidesScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
 
 export default function LookingForRides({ navigation }: LookingForRidesScreenProps) {
+  const { booking } = useRide();
+
   useEffect(() => {
     // Simulate loading and navigate to available rides after 2 seconds
     const timer = setTimeout(() => {
@@ -16,18 +19,24 @@ export default function LookingForRides({ navigation }: LookingForRidesScreenPro
     return () => clearTimeout(timer);
   }, [navigation]);
 
+  // Extract location names
+  const fromName = booking.from?.name || 'Select location';
+  const fromAddress = booking.from?.address?.split(',')[1]?.trim() || '';
+  const toName = booking.to?.name || 'Select location';
+  const toAddress = booking.to?.address?.split(',')[1]?.trim() || '';
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
         <View style={styles.routeInfo}>
           <View style={styles.routeFrom}>
-            <Text style={styles.routeText}>Cold Stone ...,</Text>
-            <Text style={styles.routeLocation}>Yaba</Text>
+            <Text style={styles.routeText} numberOfLines={1}>{fromName}</Text>
+            {fromAddress ? <Text style={styles.routeLocation}>{fromAddress}</Text> : null}
           </View>
           <Ionicons name="arrow-forward" size={20} color="#FF8800" style={[styles.arrow, { marginHorizontal: 12 }]} />
           <View style={styles.routeTo}>
-            <Text style={styles.routeText}>Lekki Phase 1,</Text>
-            <Text style={styles.routeLocation}>Lekki</Text>
+            <Text style={styles.routeText} numberOfLines={1}>{toName}</Text>
+            {toAddress ? <Text style={styles.routeLocation}>{toAddress}</Text> : null}
           </View>
         </View>
 

@@ -19,6 +19,7 @@ export interface RideBooking {
   returnTime?: string;
   pickupPoint?: Location;
   dropoffPoint?: Location;
+  paymentMethod?: string;
 }
 
 export interface ActiveRide {

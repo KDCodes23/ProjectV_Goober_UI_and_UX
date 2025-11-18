@@ -1,12 +1,31 @@
 // /screens/TripDetails.tsx
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { TripDetailsScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
+import { MapService } from '../../services/mapService';
 
 export default function TripDetails({ navigation }: TripDetailsScreenProps) {
+  const { booking } = useRide();
+  
+  // Calculate price per passenger
+  const pricePerPassenger = useMemo(() => {
+    if (booking.from?.latitude && booking.from?.longitude && 
+        booking.to?.latitude && booking.to?.longitude) {
+      const distanceKm = MapService.calculateDistance(
+        booking.from.latitude,
+        booking.from.longitude,
+        booking.to.latitude,
+        booking.to.longitude
+      );
+      const cost = MapService.calculateTripCost(distanceKm);
+      return cost;
+    }
+    return 25; // Default fallback
+  }, [booking.from, booking.to]);
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -23,11 +42,13 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
 
         {/* Route Info */}
         <View style={styles.routeInfo}>
-          <Text style={styles.routeFrom}>Cold Stone Yaba</Text>
+          <Text style={styles.routeFrom} numberOfLines={1}>{booking.from?.name || 'Select location'}</Text>
           <Ionicons name="arrow-forward" size={16} color="#FF8800" style={{ marginHorizontal: 8 }} />
-          <Text style={styles.routeTo}>Lekki Phase 1, Lekki</Text>
+          <Text style={styles.routeTo} numberOfLines={1}>{booking.to?.name || 'Select location'}</Text>
         </View>
-        <Text style={styles.tripSummary}>Fri 18 Aug • 06:00 AM • 2 Seats</Text>
+        <Text style={styles.tripSummary}>
+          {booking.date || 'Select date'} • {booking.time || 'Select time'} • {booking.seats || 1} {booking.seats === 1 ? 'Seat' : 'Seats'}
+        </Text>
 
         {/* Departure Card */}
         <View style={styles.card}>
@@ -36,14 +57,18 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
             <Text style={styles.fieldLabel}>PICK UP</Text>
             <View style={styles.inputField}>
               <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
-              <Text style={styles.inputText}>Alagomeji Bus stop</Text>
+              <Text style={styles.inputText} numberOfLines={1}>
+                {booking.from?.name || booking.from?.address || 'Select location'}
+              </Text>
             </View>
           </View>
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>DROP OFF</Text>
             <View style={styles.inputField}>
               <Ionicons name="location-outline" size={16} color="#999" />
-              <Text style={styles.inputText}>Lekki Gate Bus stop</Text>
+              <Text style={styles.inputText} numberOfLines={1}>
+                {booking.to?.name || booking.to?.address || 'Select location'}
+              </Text>
             </View>
           </View>
           <View style={styles.divider} />
@@ -52,50 +77,56 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
               <Ionicons name="time-outline" size={20} color="#666" style={{ marginRight: 8 }} />
               <Text style={styles.infoLabel}>Depart</Text>
             </View>
-            <Text style={styles.infoValue}>06:00 AM</Text>
+            <Text style={styles.infoValue}>{booking.time || 'Select time'}</Text>
           </View>
           <View style={styles.infoRow}>
             <View style={styles.infoItem}>
               <Ionicons name="person-outline" size={20} color="#666" />
-              <Text style={styles.infoLabel}>Seats available</Text>
+              <Text style={styles.infoLabel}>Seats</Text>
             </View>
-            <Text style={styles.infoValue}>2</Text>
+            <Text style={styles.infoValue}>{booking.seats || 1}</Text>
           </View>
         </View>
 
-        {/* Return Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Return</Text>
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>PICK UP</Text>
-            <View style={styles.inputField}>
-              <Ionicons name="location-outline" size={16} color="#999" />
-              <Text style={styles.inputText}>Lekki Gate Bus stop</Text>
+        {/* Return Card - Only show if round trip */}
+        {booking.isRoundTrip && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Return</Text>
+            <View style={styles.fieldRow}>
+              <Text style={styles.fieldLabel}>PICK UP</Text>
+              <View style={styles.inputField}>
+                <Ionicons name="location-outline" size={16} color="#999" />
+                <Text style={styles.inputText} numberOfLines={1}>
+                  {booking.to?.name || booking.to?.address || 'Select location'}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.fieldRow}>
+              <Text style={styles.fieldLabel}>DROP OFF</Text>
+              <View style={styles.inputField}>
+                <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
+                <Text style={styles.inputText} numberOfLines={1}>
+                  {booking.from?.name || booking.from?.address || 'Select location'}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.infoRow}>
+              <View style={styles.infoItem}>
+                <Ionicons name="time-outline" size={20} color="#666" />
+                <Text style={styles.infoLabel}>Return</Text>
+              </View>
+              <Text style={styles.infoValue}>{booking.returnTime || 'TBD'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <View style={styles.infoItem}>
+                <Ionicons name="person-outline" size={20} color="#666" />
+                <Text style={styles.infoLabel}>Seats</Text>
+              </View>
+              <Text style={styles.infoValue}>{booking.seats || 1}</Text>
             </View>
           </View>
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>DROP OFF</Text>
-            <View style={styles.inputField}>
-              <Ionicons name="location-outline" size={16} color="#999" style={{ marginRight: 8 }} />
-              <Text style={styles.inputText}>Alagomeji Bus stop</Text>
-            </View>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.infoRow}>
-            <View style={styles.infoItem}>
-              <Ionicons name="time-outline" size={20} color="#666" />
-              <Text style={styles.infoLabel}>Return</Text>
-            </View>
-            <Text style={styles.infoValue}>06:00 PM</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <View style={styles.infoItem}>
-              <Ionicons name="person-outline" size={20} color="#666" />
-              <Text style={styles.infoLabel}>Seats available</Text>
-            </View>
-            <Text style={styles.infoValue}>2</Text>
-          </View>
-        </View>
+        )}
 
         {/* Driver Card */}
         <View style={styles.card}>
@@ -105,7 +136,7 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
               <Ionicons name="person" size={32} color="#999" />
             </View>
             <View style={styles.driverDetails}>
-              <Text style={styles.driverName}>Olakunle Diran</Text>
+              <Text style={styles.driverName}>Michael Johnson</Text>
               <Text style={styles.verifiedText}>Verified driver</Text>
             </View>
             <View style={styles.ratingContainer}>
@@ -122,7 +153,7 @@ export default function TripDetails({ navigation }: TripDetailsScreenProps) {
 
       {/* Bottom Bar */}
       <View style={styles.bottomBar}>
-        <Text style={styles.priceLabel}>$25/Passenger</Text>
+        <Text style={styles.priceLabel}>${pricePerPassenger.toFixed(2)}/Passenger</Text>
         <TouchableOpacity
           style={styles.bookButton}
           onPress={() => navigation.navigate('TripGoldenRules')}

@@ -101,7 +101,7 @@ export default function InTripMap({ navigation }: InTripMapScreenProps) {
             </View>
           </View>
           <View style={styles.driverDetails}>
-            <Text style={styles.driverName}>Ride share with Diran Olakunle</Text>
+            <Text style={styles.driverName}>Ride share with Michael Johnson</Text>
             <Text style={styles.carInfo}>Toyota Camry • JJJ 452 FZ</Text>
             <Text style={styles.rideDate}>Fri 18 Aug, 06:00 AM</Text>
           </View>
@@ -146,10 +146,7 @@ export default function InTripMap({ navigation }: InTripMapScreenProps) {
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
-          onPress={() => {
-            // TODO: Navigate to trips screen
-            console.log('Trips pressed');
-          }}
+          onPress={() => navigation.navigate('Trips')}
         >
           <Ionicons name="car-outline" size={24} color="#999" />
           <Text style={[styles.navLabel, styles.navLabelInactive]}>Trips</Text>

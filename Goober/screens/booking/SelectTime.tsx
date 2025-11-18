@@ -1,7 +1,7 @@
 // /screens/SelectTime.tsx
 
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { SelectTimeScreenProps } from '../../types/navigation';
@@ -24,11 +24,17 @@ const generateTimeSlots = () => {
 };
 
 export default function SelectTime({ navigation }: SelectTimeScreenProps) {
-  const [selectedTime, setSelectedTime] = useState('06:00 AM');
+  const { booking, updateBooking } = useRide();
+  const [selectedTime, setSelectedTime] = useState(booking.time || '06:00 AM');
   const [showPicker, setShowPicker] = useState(false);
   const timeSlots = generateTimeSlots();
 
-  const { updateBooking } = useRide();
+  // Update selected time when booking time changes
+  useEffect(() => {
+    if (booking.time) {
+      setSelectedTime(booking.time);
+    }
+  }, [booking.time]);
   
   const handleConfirm = () => {
     updateBooking({ time: selectedTime });
@@ -70,13 +76,14 @@ export default function SelectTime({ navigation }: SelectTimeScreenProps) {
               <Text style={styles.modalTitle}>Select Time</Text>
               <TouchableOpacity
                 onPress={() => {
+                  updateBooking({ time: selectedTime });
                   setShowPicker(false);
                 }}
               >
                 <Text style={styles.modalDone}>Done</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.timeList}>
+            <ScrollView style={styles.timeList} showsVerticalScrollIndicator={true}>
               {timeSlots.map((time, index) => (
                 <TouchableOpacity
                   key={index}
@@ -86,7 +93,6 @@ export default function SelectTime({ navigation }: SelectTimeScreenProps) {
                   ]}
                   onPress={() => {
                     setSelectedTime(time.display);
-                    setShowPicker(false);
                   }}
                 >
                   <Text
@@ -99,7 +105,7 @@ export default function SelectTime({ navigation }: SelectTimeScreenProps) {
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -191,6 +197,7 @@ const styles = StyleSheet.create({
   },
   timeList: {
     maxHeight: 400,
+    flexGrow: 0,
   },
   timeOption: {
     padding: 20,

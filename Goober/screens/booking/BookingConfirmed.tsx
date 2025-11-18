@@ -17,7 +17,7 @@ export default function BookingConfirmed({ navigation }: BookingConfirmedScreenP
         const newRide: ActiveRide = {
           id: Date.now().toString(),
           driverId: '1',
-          driverName: 'Diran Olakunle',
+          driverName: 'Michael Johnson',
           carInfo: 'Toyota Camry • JJJ 452 FZ',
           status: 'accepted',
           from: booking.from,
@@ -53,7 +53,7 @@ export default function BookingConfirmed({ navigation }: BookingConfirmedScreenP
               const newRide: ActiveRide = {
                 id: Date.now().toString(),
                 driverId: '1',
-                driverName: 'Diran Olakunle',
+                driverName: 'Michael Johnson',
                 carInfo: 'Toyota Camry • JJJ 452 FZ',
                 status: 'accepted',
                 from: booking.from,

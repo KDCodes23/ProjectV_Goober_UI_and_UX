@@ -3,7 +3,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
-  TestScreen: undefined;
   Splash: undefined;
   Welcome: undefined;
   SignIn: undefined;
@@ -35,6 +34,7 @@ export type RootStackParamList = {
   DriverArrived: undefined;
   InTripMap: undefined;
   TwoFactorAuth: undefined;
+  Trips: undefined;
 };
 
 export type SplashScreenProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
@@ -68,4 +68,5 @@ export type DriverEnRouteScreenProps = NativeStackScreenProps<RootStackParamList
 export type DriverArrivedScreenProps = NativeStackScreenProps<RootStackParamList, 'DriverArrived'>;
 export type InTripMapScreenProps = NativeStackScreenProps<RootStackParamList, 'InTripMap'>;
 export type TwoFactorAuthScreenProps = NativeStackScreenProps<RootStackParamList, 'TwoFactorAuth'>;
+export type TripsScreenProps = NativeStackScreenProps<RootStackParamList, 'Trips'>;
 

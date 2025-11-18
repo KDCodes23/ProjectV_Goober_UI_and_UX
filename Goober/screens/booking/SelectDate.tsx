@@ -1,6 +1,6 @@
 // /screens/SelectDate.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -42,6 +42,26 @@ export default function SelectDate({ navigation }: SelectDateScreenProps) {
   const today = new Date();
   const todayDay = today.getDate();
   const currentMonth = today.getMonth();
+  
+  // Initialize selected date from booking if available
+  useEffect(() => {
+    if (booking.date && !selectedDate) {
+      // Try to parse existing date format (e.g., "Fri 18 Aug")
+      const parts = booking.date.split(' ');
+      if (parts.length >= 3) {
+        const day = parseInt(parts[1]);
+        const monthName = parts[2];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthIndex = monthNames.indexOf(monthName);
+        if (monthIndex !== -1 && day) {
+          const monthOffset = monthIndex - currentMonth;
+          if (monthOffset >= 0 && monthOffset < 3) {
+            setSelectedDate({ month: monthOffset, day });
+          }
+        }
+      }
+    }
+  }, []);
 
   const isPastDate = (monthIndex: number, day: number) => {
     if (monthIndex === 0 && day < todayDay) return true;
@@ -58,8 +78,11 @@ export default function SelectDate({ navigation }: SelectDateScreenProps) {
     if (selectedDate) {
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const date = new Date(2024, selectedDate.month, selectedDate.day);
-      const formattedDate = `${dayNames[date.getDay()]} ${monthNames[selectedDate.month]} ${selectedDate.day}`;
+      // Calculate the actual date based on current month + monthIndex
+      const actualMonth = today.getMonth() + selectedDate.month;
+      const actualYear = today.getFullYear();
+      const date = new Date(actualYear, actualMonth, selectedDate.day);
+      const formattedDate = `${dayNames[date.getDay()]} ${date.getDate()} ${monthNames[actualMonth]}`;
       updateBooking({ date: formattedDate });
       navigation.goBack();
     }

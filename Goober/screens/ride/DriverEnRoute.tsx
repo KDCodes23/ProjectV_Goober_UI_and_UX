@@ -1,12 +1,45 @@
 // /screens/DriverEnRoute.tsx
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { DriverEnRouteScreenProps } from '../../types/navigation';
+import { useRide } from '../../contexts/RideContext';
 
 export default function DriverEnRoute({ navigation }: DriverEnRouteScreenProps) {
+  const { activeRide } = useRide();
+  const [timeRemaining, setTimeRemaining] = useState(5 * 60); // 5 minutes in seconds
+
+  useEffect(() => {
+    // Initialize with ETA from activeRide if available
+    if (activeRide?.eta) {
+      const etaMinutes = parseInt(activeRide.eta.replace(/\D/g, '')) || 5;
+      setTimeRemaining(etaMinutes * 60);
+    }
+
+    // Countdown timer
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [activeRide?.eta]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (mins === 0) {
+      return `${secs}s`;
+    }
+    return `${mins}m ${secs}s`;
+  };
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -40,12 +73,12 @@ export default function DriverEnRoute({ navigation }: DriverEnRouteScreenProps) 
               </View>
             </View>
             <View style={styles.driverInfo}>
-              <Text style={styles.driverName}>Ride share with Diran Olakunle</Text>
+              <Text style={styles.driverName}>Ride share with Michael Johnson</Text>
               <Text style={styles.carInfo}>Toyota Camry • JJJ 452 FZ</Text>
               <Text style={styles.rideDate}>Fri 18 Aug, 06:00 AM</Text>
             </View>
           </View>
-          <Text style={styles.statusText}>Olakunle Diran has started the trip</Text>
+          <Text style={styles.statusText}>Michael Johnson has started the trip</Text>
           <Text style={styles.subStatusText}>Driver is on his way to pick up point</Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity 
@@ -69,7 +102,7 @@ export default function DriverEnRoute({ navigation }: DriverEnRouteScreenProps) 
           </View>
           <View style={styles.etaContainer}>
             <Text style={styles.etaLabel}>Estimated arrival to pick up point</Text>
-            <Text style={styles.etaValue}>5 mins</Text>
+            <Text style={styles.etaValue}>{formatTime(timeRemaining)}</Text>
           </View>
         </View>
 
@@ -102,10 +135,7 @@ export default function DriverEnRoute({ navigation }: DriverEnRouteScreenProps) 
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
-          onPress={() => {
-            // TODO: Navigate to trips screen
-            console.log('Trips pressed');
-          }}
+          onPress={() => navigation.navigate('Trips')}
         >
           <Ionicons name="car-outline" size={24} color="#999" />
           <Text style={[styles.navLabel, styles.navLabelInactive]}>Trips</Text>

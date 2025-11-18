@@ -214,17 +214,42 @@ export default function BookRide({ navigation }: BookRideScreenProps) {
           onPress={() => navigation.navigate('Payment')}
         >
           <View style={styles.cardIcon}>
-            <View style={styles.mastercardCircle1} />
-            <View style={styles.mastercardCircle2} />
+            {booking.paymentMethod === 'visa' ? (
+              <View style={styles.visaIcon}>
+                <Text style={styles.visaText}>VISA</Text>
+              </View>
+            ) : booking.paymentMethod === 'goober' ? (
+              <Ionicons name="wallet-outline" size={20} color="#666" />
+            ) : (
+              <>
+                <View style={styles.mastercardCircle1} />
+                <View style={styles.mastercardCircle2} />
+              </>
+            )}
           </View>
-          <Text style={styles.cardText}>.... 5678</Text>
+          <Text style={styles.cardText}>
+            {booking.paymentMethod === 'goober' 
+              ? 'Goober Balance' 
+              : booking.paymentMethod 
+              ? '.... 5678' 
+              : 'Select payment'}
+          </Text>
           <Ionicons name="chevron-forward" size={20} color="#999" style={{ marginLeft: 12 }} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={() => navigation.navigate('LookingForRides')}
+          style={[styles.confirmButton, !booking.paymentMethod && styles.confirmButtonDisabled]}
+          onPress={() => {
+            if (booking.paymentMethod) {
+              navigation.navigate('LookingForRides');
+            } else {
+              navigation.navigate('Payment');
+            }
+          }}
+          disabled={!booking.paymentMethod}
         >
-          <Text style={styles.confirmButtonText}>Confirm</Text>
+          <Text style={styles.confirmButtonText}>
+            {booking.paymentMethod ? 'Confirm' : 'Select Payment'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -384,10 +409,28 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: 'center',
   },
+  confirmButtonDisabled: {
+    backgroundColor: '#E5E5E5',
+    opacity: 0.6,
+  },
   confirmButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1A1A1A',
+  },
+  visaIcon: {
+    width: 40,
+    height: 24,
+    backgroundColor: '#1A1F71',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  visaText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+    letterSpacing: 1,
   },
 });
 

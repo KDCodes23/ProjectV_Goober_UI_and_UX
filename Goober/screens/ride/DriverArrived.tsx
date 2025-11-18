@@ -42,12 +42,12 @@ export default function DriverArrived({ navigation }: DriverArrivedScreenProps) 
               </View>
             </View>
             <View style={styles.driverInfo}>
-              <Text style={styles.driverName}>Ride share with Diran Olakunle</Text>
+              <Text style={styles.driverName}>Ride share with Michael Johnson</Text>
               <Text style={styles.carInfo}>Toyota Camry • JJJ 452 FZ</Text>
               <Text style={styles.rideDate}>Fri 18 Aug, 06:00 AM</Text>
             </View>
           </View>
-          <Text style={styles.statusText}>Olakunle Diran has arrived</Text>
+          <Text style={styles.statusText}>Michael Johnson has arrived</Text>
           <Text style={styles.codeLabel}>Give your driver this code:</Text>
           <View style={styles.codeContainer}>
             {code.split('').map((digit, index) => (
@@ -87,10 +87,7 @@ export default function DriverArrived({ navigation }: DriverArrivedScreenProps) 
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
-          onPress={() => {
-            // TODO: Navigate to trips screen
-            console.log('Trips pressed');
-          }}
+          onPress={() => navigation.navigate('Trips')}
         >
           <Ionicons name="car-outline" size={24} color="#999" />
           <Text style={[styles.navLabel, styles.navLabelInactive]}>Trips</Text>

@@ -112,10 +112,7 @@ export default function BookingAccepted({ navigation }: BookingAcceptedScreenPro
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navItem}
-          onPress={() => {
-            // TODO: Navigate to trips screen
-            console.log('Trips pressed');
-          }}
+          onPress={() => navigation.navigate('Trips')}
         >
           <Ionicons name="car-outline" size={24} color="#999" />
           <Text style={[styles.navLabel, styles.navLabelInactive]}>Trips</Text>
